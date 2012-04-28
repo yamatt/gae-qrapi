@@ -2,16 +2,28 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
         <title>QR Api</title>
-        <link rel="stylesheet" href="static/css/media.css" />
+        <link rel="stylesheet" href="static/all.css" />
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
         <script type="text/javascript" src="static/qrapi.js"></script>
     </head>
     <body>
-        <h1>QR API</h2>
-        <p>This page allows you to access the early beta of the QR API. An API entirely written in Python 2.7 for the Google App Engine that allows you to generate QR codes for a given URL or string without resorting to outside APIs like Google Charts.</p>
-        <form action="" method="get">
-            <label>URL or text<input type="text" name="value"></label>
-            <button type="submit">Get QR image</button>
-        </form>
+        <div id="container">
+            <a href="/" title="QR API"><img src="/gae-qrapi" alt="QR API Logo" /></a>
+            <form action="" method="get">
+                <label>URL or text<textarea name="value">{{ value }}</textarea></label>
+                <span class="small grey" id="tips"></span>
+                <button type="submit">Get QR image</button>
+            </form>
+        </div>
+        <span data-adblocksize="468x60" class="emberadblock" > </span>
+        <!--
+        <script type="text/javascript">var emberAdsUserUID = '6fb99e10-7129-012f-09e5-022419e8e4ae';var emberAdsPlusLinks = 1;</script>
+        <script type="text/javascript" src="https://js.emberads.com/pineapple.js" async="true"></script>
+        -->
+        
+        <div>
+            <h1>QR API</h1>
+            <p></p>
+        </div>
     </body>
 </html>

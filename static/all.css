@@ -1,0 +1,45 @@
+body {
+  font-family: sans-serif;
+  font-size: 120%;
+  color: #999;
+}
+
+.small {
+  font-size: 80%;
+}
+
+.grey {
+  color: #888;
+}
+
+#container {
+  height: 100%;
+  text-align: center;
+}
+
+textarea {
+  display: block;
+  font-family: sans-serif;
+  font-size: 120%;
+  width: 30em;
+  height: 3em;
+  margin: auto;
+}
+
+button {
+  font-size: 120%;
+}
+
+.fat-border {
+  border: 1em black solid;
+  border-radius: 1em;
+}
+
+.padding {
+  padding: 1em;
+}
+
+.top-spacer {
+  display: inline-block;
+  margin-top: 2em;
+}
