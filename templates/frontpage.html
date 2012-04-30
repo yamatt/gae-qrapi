@@ -8,22 +8,59 @@
     </head>
     <body>
         <div id="container">
-            <a href="/" title="QR API"><img src="/gae-qrapi" alt="QR API Logo" /></a>
+            <a href="/" title="QR This API"><img src="/gae-qrapi" alt="QR API Logo" /></a>
             <form action="" method="get">
-                <label>URL or text<textarea name="value">{{ value }}</textarea></label>
-                <span class="small grey" id="tips"></span>
+                <label>URL or text<textarea class="block" name="value">{{ value }}</textarea></label>
+                <span class="small grey block" id="tips"></span>
                 <button type="submit">Get QR image</button>
             </form>
         </div>
-        <span data-adblocksize="468x60" class="emberadblock" > </span>
         <!--
-        <script type="text/javascript">var emberAdsUserUID = '6fb99e10-7129-012f-09e5-022419e8e4ae';var emberAdsPlusLinks = 1;</script>
-        <script type="text/javascript" src="https://js.emberads.com/pineapple.js" async="true"></script>
+        <span data-adblocksize="468x60" class="emberadblock" ></span>
         -->
-        
         <div>
             <h1>QR API</h1>
-            <p></p>
+            <p>Is an API that allows you to directly create images with QR patterns in them to be generated dynamically through a web interface</p>
+            <h2>Why</h2>
+            <p></p>There does exist some Google App Engine based sites that generate QR codes using the Google Chart API but I found a way to do it entirely in Python without the need for external API.</p>
+            <h2>Status</h2>
+            <p>Beta. This code is working and in use. There still may be some bugs I would like to solve before adding new features.</p>
+            <h2>API</h2>
+            <p>The API is pretty simple.</p>
+            <pre>
+    Route: /
+    Result: Gives you the web interface static page
+
+    Route: /<value>
+    Result: Anything in value that is URL escaped will be put in to a QR code unless there is a problem in which case a JSON error message is returned in the format {'error': True, 'message': 'The value was to long'}
+    Query Strings: If you want to check on the likely success of a value first put a ?info=true query string on the end of the URL. This will generate the QR code in the background, insert it in to the database and report if it succeeded.
+            </pre>
+            <h2>Future plans</h2>
+            <ul>
+                <li>A query string parameter for the size of the QR code you would like</li>
+                <li>A query string parameter for the background and foreground colour.</li>
+            </ul>
+            <h2>License</h2>
+            <p>GPLv3</p>
+            <pre>
+    This file is part of QR API.
+
+    QR API is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    QR API is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with QR API.  If not, see <http://www.gnu.org/licenses/>.
+            </pre>
+            <h2>Source</h2>
+            <p><a href="https://github.com/yamatt/gae-qrapi">My GitHub</a> <a href="http://localhosy.net">Me</a></p>
         </div>
     </body>
+{% include 'ads.html.ignore' %}
 </html>
