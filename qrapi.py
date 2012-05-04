@@ -20,7 +20,7 @@ import jinja2
 from json import dumps as dict_to_json_string
 from urllib import quote_plus as urlencode, unquote as urldecode
 from google.appengine.ext.webapp import template
-from qrparse import GetQR
+from qrmodels import QRKey, QRStore
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")))
@@ -44,17 +44,15 @@ class FrontPage(RequestHandler):
 class QRImage(RequestHandler):
     def get(self, value):
         value = urldecode(value)
-        qr = GetQR(value)
-        errors = qr.has_errors()
-        if errors:
-            jsonify(self.response, {"success": False, "message": errors})
-        else:
-            png = qr.get_image()
-            if self.request.get('info'):
-                jsonify(self.response, {"success": True, "message": "Image generated. Saved to database."})
-            else:
-                self.response.headers['Content-Type'] = "image/png"
-                self.response.out.write(png)
+        qr_key = QRKey.from_value(value)
+        qr_image = QRStore.get(qr_key)
+        if not qr_image:
+            qr_image = QRStore(value)
+        
+        qr_image.put()  # saves the image if new, but otherwise just updates the access time
+        self.response.headers['Content-Type'] = "image/png"
+        self.response.out.write(qr_image.get_image())
+        
 
 app = WSGIApplication([
         Route('/', handler=FrontPage, name='home'),
