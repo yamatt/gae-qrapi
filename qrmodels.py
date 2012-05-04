@@ -63,10 +63,13 @@ class QRStore(db.Model):
     raw_qr_image = QRImageProperty()
     
     def __init__(self, value):
-        hash_value = sha512(value).hexdigest()
-        raw_qr_image = MakeQR(value).modules
-        raw_qr_image = self.__clean_modules(raw_qr_image)
-        super(QRStore, self).__init__(key_name=hash_value, raw_qr_image=raw_qr_image)
+        if len(value) > 6:
+            hash_value = sha512(value).hexdigest()
+            raw_qr_image = MakeQR(value).modules
+            raw_qr_image = self.__clean_modules(raw_qr_image)
+            super(QRStore, self).__init__(key_name=hash_value, raw_qr_image=raw_qr_image)
+        else:
+            raise QRValueError("QR value too short.")
         
     def __clean_modules(self, modules):
         return map(lambda row: map(lambda data: False if data else True, row), modules)
@@ -98,3 +101,6 @@ class QRStore(db.Model):
         raw_qr_image = self.scale_image(raw_qr_image, scale)
         qr_image = self.render_image(raw_qr_image, fg_colour, bg_colour)
         return qr_image
+
+class QRValueError(Exception):
+    pass
