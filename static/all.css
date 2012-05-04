@@ -43,6 +43,7 @@ button {
 }
 
 .top-spacer {
-  display: inline-block;
+  display: block;
   margin-top: 2em;
 }
+

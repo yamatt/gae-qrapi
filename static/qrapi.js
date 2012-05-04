@@ -27,7 +27,7 @@ var base_url = "/";
 $(document).ready(function() {
   var image_area = $('<div></div>');
   image_area.attr('class', 'fat-border padding top-spacer');
-  var container = $('#container');
+  var form = $('form');
   
   add_tip_to($('#tips'))
     
@@ -46,7 +46,7 @@ $(document).ready(function() {
             image_area.empty();
             image_area.hide();
             image_area.append(qr_image);
-            container.append(image_area);
+            form.after(image_area);
             image_area.fadeIn();
         }
         else {
@@ -62,7 +62,7 @@ function add_tip_to(element){
         $(this).fadeIn("normal", function () {
             setTimeout(function () {
                 add_tip_to(element)
-            }, 5000);
+            }, tip_delay);
         });
     });
 }
