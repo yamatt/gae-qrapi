@@ -1,5 +1,5 @@
 application: qrthisurl
-version: 2
+version: 3
 runtime: python27
 api_version: 1
 threadsafe: true
@@ -17,4 +17,7 @@ handlers:
 
 libraries:
 - name: jinja2
+  version: latest
+
+- name: PIL
   version: latest

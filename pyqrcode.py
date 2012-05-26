@@ -12,9 +12,8 @@
 #
 #
 
-## Matt Copperwaite: Made some modifications to work with Google App Engine and be more memory efficient for that purpose
-
 import math
+from PIL import Image, ImageDraw
 
 #QRCode for Python
 #
@@ -23,7 +22,7 @@ import math
 #QRCode for Javascript
 #http://d-project.googlecode.com/svn/trunk/misc/qrcode/js/qrcode.js
 #
-#Copyright (c) 2009 Kazuhiko Arase, 2012 Matt Copperwaite
+#Copyright (c) 2009 Kazuhiko Arase
 #
 #URL: http://www.d-project.com/
 #
@@ -98,6 +97,14 @@ def MakeQR(data, minTypeNumber = 0, errorCorrectLevel = QRErrorCorrectLevel.Q, v
 
 			continue
 
+def MakeQRImage(data, minTypeNumber = 0, errorCorrectLevel = QRErrorCorrectLevel.Q, **ad):
+	"""This tries to produce a reasonable QR Code ... and returns the image"""
+
+	qr = MakeQR(data, minTypeNumber, errorCorrectLevel)
+	qr_image = qr.make_image(**ad)
+
+	return	qr_image
+
 class QRCode(object):
 	def __init__(self, typeNumber, errorCorrectLevel):
 		self.typeNumber = typeNumber
@@ -106,24 +113,19 @@ class QRCode(object):
 		self.moduleCount = 0
 		self.dataCache = None
 		self.dataList = []
-        
 	def addData(self, data):
 		newData = QR8bitByte(data)
 		self.dataList.append(newData)
 		self.dataCache = None
-        
 	def isDark(self, row, col):
 		if (row < 0 or self.moduleCount <= row or col < 0 or self.moduleCount <= col):
 			return	False
 
 		return self.modules[row][col]
-        
 	def getModuleCount(self):
 		return self.moduleCount
-        
 	def make(self):
-		self.makeImpl(False, self.getBestMaskPattern())
-        
+		self.makeImpl(False, self.getBestMaskPattern() )
 	def makeImpl(self, test, maskPattern):
 
 		self.moduleCount = self.typeNumber * 4 + 17
@@ -183,6 +185,77 @@ class QRCode(object):
 				pattern = i
 
 		return pattern
+
+	def createMovieClip(self):
+		raise Exception("Method not relevant to Python port")
+
+	def make_image(self, 
+		mode = "RGBA", bg = "white", fg = "black", block_in_pixels = 10, border_in_blocks = 4, rounding = 0,
+		tl = True, bl = True, br = True, tr = True,
+	):
+		"""
+		tl (etc) allow corners not to be rounded if 'rounding' is used
+		"""
+		## http://nadiana.com/pil-tutorial-basic-advanced-drawing
+		def round_corner(radius, fg, bg):
+			"""Draw a round corner"""
+			corner = Image.new('RGBA', (radius, radius), bg)
+
+			draw = ImageDraw.Draw(corner)
+			draw.pieslice((0, 0, radius * 2, radius * 2), 180, 270, fill=fg)
+
+			return corner
+		 
+		def round_rectangle(size, radius, fg, bg, tl = True, bl = True, br = True, tr = True):
+			"""Draw a rounded rectangle"""
+
+			width, height = size
+			corner = round_corner(radius, fg, bg)
+
+			rectangle = Image.new('RGBA', size, fg)
+			if tl: rectangle.paste(corner, (0, 0))
+			if bl: rectangle.paste(corner.rotate(90), (0, height - radius)) # Rotate the corner and paste it
+			if br: rectangle.paste(corner.rotate(180), (width - radius, height - radius))
+			if tr: rectangle.paste(corner.rotate(270), (width - radius, 0))
+
+			return rectangle
+		 
+		block_in_pixels = 10 #pixels per box
+		border_in_blocks = 4 #boxes as border
+		pixelsize = (self.getModuleCount() + border_in_blocks + border_in_blocks) * block_in_pixels
+
+		im = Image.new(mode, (pixelsize, pixelsize), bg)
+		d = ImageDraw.Draw(im)
+
+		rr = None
+		if rounding > 0:
+			rr = round_rectangle(( block_in_pixels, block_in_pixels, ), rounding, fg, bg)
+
+		for r in range(self.getModuleCount()):
+			for c in range(self.getModuleCount()):
+				if not self.isDark(r, c):
+					continue
+
+				x = (c + border_in_blocks) * block_in_pixels
+				y = (r + border_in_blocks) * block_in_pixels
+				b = [(x,y),(x+block_in_pixels,y+block_in_pixels)]
+
+				if round > 0:
+					rr = round_rectangle(
+						( block_in_pixels, block_in_pixels, ), 
+						rounding, 
+						fg, bg,
+						tl = not ( self.isDark(r - 1, c) or self.isDark(r, c - 1) ) and tl,
+						bl = not ( self.isDark(r, c - 1) or self.isDark(r + 1, c) ) and bl,
+						tr = not ( self.isDark(r - 1, c) or self.isDark(r, c + 1) ) and tr,
+						br = not ( self.isDark(r + 1, c) or self.isDark(r, c + 1) ) and br,
+					)
+					im.paste(rr, (x, y))
+					pass
+				else:
+					d.rectangle(b,fill=fg)
+		del d
+		return im
 
 	def setupTimingPattern(self):
 
