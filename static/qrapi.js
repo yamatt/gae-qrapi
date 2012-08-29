@@ -30,6 +30,10 @@ $(document).ready(function() {
   var form = $('form');
   
   add_tip_to($('#tips'))
+  
+  $(".default").focus(function (e) {
+    this.select()
+  });
     
   $('form').submit(function (event) {
     event.preventDefault();

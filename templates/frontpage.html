@@ -1,16 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
     <head>
-        <title>QR Api</title>
+        <title>QR API</title>
         <link rel="stylesheet" href="static/all.css" />
         <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.7/jquery.min.js"></script>
         <script type="text/javascript" src="static/qrapi.js"></script>
     </head>
     <body>
         <div id="container">
-            <a href="/" title="QR This API"><img src="/gae-qrapi" alt="QR API Logo" /></a>
+            <a href="/" title="QR This API"><img src="/http%3A%2F%2Fqrthisurl.appspot.com%2Fi" alt="QR API Logo" /></a>
             <form action="" method="get">
-                <label>URL or text<textarea class="block" name="value">{{ value }}</textarea></label>
+                <label>URL or text<textarea class="block default" name="value">{{ value }}</textarea></label>
                 <span class="small grey block" id="tips"></span>
                 <button type="submit">Get QR image</button>
             </form>

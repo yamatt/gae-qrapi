@@ -22,6 +22,8 @@ from urllib import quote_plus as urlencode, unquote as urldecode
 from google.appengine.ext.webapp import template
 from qrmodels import QRKey, QRStore, QRValueError
 
+SITE_URL = "http://qrthisurl.appspot.com/"
+
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")))
 
@@ -38,6 +40,8 @@ class FrontPage(RequestHandler):
     def get(self):
         if self.request.get('value') and len(self.request.get('value')) >= 6:
             self.redirect(uri_for('qrimage', value=urlencode(self.request.get('value'))))
+        elif not self.request.get('value'):
+            render(self.response, 'frontpage.html', {'value': SITE_URL})
         else:
             render(self.response, 'frontpage.html', {'value': self.request.get('value')})
 
