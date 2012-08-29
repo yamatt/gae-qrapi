@@ -46,10 +46,14 @@ $(document).ready(function() {
         if (data['success']){
             qr_image = $("<img />");
             qr_image.attr('src', qr_url);
+            qr_image.addClass("block")
+            qr_link = $("<a>Link</a>");
+            qr_link.attr('href': qr_url);
             image_area.remove();
             image_area.empty();
             image_area.hide();
             image_area.append(qr_image);
+            image_area.append(qr_link);
             form.after(image_area);
             image_area.fadeIn();
         }
