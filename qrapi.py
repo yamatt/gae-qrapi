@@ -27,8 +27,11 @@ SITE_URL = "http://qrthisurl.appspot.com/"
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")))
 
-def jsonify(response, out_dict):
+def jsonify(response, out_dict, jsonp=None):
+    jsonp_wrap = "%s(%s)"
     out_json = dict_to_json_string(out_dict)
+    if jsonp:
+        out_json = jsonp_wrap % (jsonp, out_json)
     response.headers['Content-Type'] = "application/json"
     response.out.write(out_json)
 
@@ -49,6 +52,7 @@ class QRImage(RequestHandler):
     def get(self, value):
         value = urldecode(value)
         qr_key = QRKey.from_value(value)
+        jsonp = self.request.get('callback')
         try:
             qr_image = QRStore.get(qr_key)
             if not qr_image:
@@ -56,13 +60,20 @@ class QRImage(RequestHandler):
             
             qr_image.put()  # saves the image if new, but otherwise just updates the access time
             if self.request.get('info'):
-                jsonify(self.response, {"success": True, "message": "QR code now stored in database."})
+                if jsonp:
+                    jsonify(self.response, {"success": True, "message": "QR code now stored in database."}, jsonp)
+                else:
+                    jsonify(self.response, {"success": True, "message": "QR code now stored in database."})
             else:
                 self.response.headers['Content-Type'] = "image/png"
                 self.response.out.write(qr_image.get_image())
                 
         except QRValueError:
-            jsonify(self.response, {"success": False, "message": "Value too short."})
+            if jsonp:
+                jsonify(self.response, {"success": False, "message": "Value too short."}, jsonp)
+            else:
+                jsonify(self.response, {"success": False, "message": "Value too short."})
+                
         
 
 app = WSGIApplication([
