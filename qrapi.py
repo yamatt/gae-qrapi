@@ -23,15 +23,15 @@ from google.appengine.ext.webapp import template
 from qrmodels import QRKey, QRStore, QRValueError
 
 SITE_URL = "http://qrthisurl.appspot.com/"
+JSONP = "%s(%s)"    # I appreciated JSONP is a bad idea however this was the quickest solution
 
 jinja_environment = jinja2.Environment(
     loader=jinja2.FileSystemLoader(os.path.join(os.path.dirname(__file__), "templates")))
 
-def jsonify(response, out_dict, jsonp=None):
-    jsonp_wrap = "%s(%s)"
+def jsonify(response, out_dict, jsonp_name=None):
     out_json = dict_to_json_string(out_dict)
-    if jsonp:
-        out_json = jsonp_wrap % (jsonp, out_json)
+    if jsonp_name:
+        out_json = JSONP % (jsonp_name, out_json)
     response.headers['Content-Type'] = "application/json"
     response.out.write(out_json)
 
